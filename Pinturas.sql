@@ -146,3 +146,45 @@ insert into Pago values ("225",180,170,"77","0264");
 insert into Pago values ("888",150,300,"88","1257");
 insert into Pago values ("999",200,144,"99","9999");
 insert into Pago values ("001",147,120,"00","0021");
+
+
+SELECT c.Nombre AS Nombre_Cliente, a.Nombre AS Nombre_Artista, o.Nombre AS Nombre_Obra_Arte
+FROM Cliente c
+INNER JOIN Tipo_transaccion t ON c.Correo = t.ID_Cliente
+INNER JOIN Pago p ON t.ID = p.NumTransaccion
+INNER JOIN Obra_arte o ON p.ID_ObraArte = o.ID
+INNER JOIN Artista a ON o.ID_Artista = a.Correo
+WHERE a.Año_nacimiento >= 1990;
+
+SELECT o.Paleta, COUNT(o.Paleta) AS Cantidad_Veces_Comprada, c.Nombre AS Nombre_Cliente
+FROM Obra_arte o
+INNER JOIN Pago p ON o.ID = p.ID_ObraArte
+INNER JOIN Tipo_transaccion t ON p.NumTransaccion = t.ID
+INNER JOIN Cliente c ON t.ID_Cliente = c.Correo
+GROUP BY o.Paleta, c.Nombre
+ORDER BY Cantidad_Veces_Comprada DESC
+LIMIT 1;
+
+SELECT e.ID, r.Nombre AS Nombre_Repartidor, e.Direccion
+FROM Envio e
+LEFT JOIN Repartidor r ON e.Repartidor = r.ID;
+
+SELECT t.ID AS Pedido_ID, t.Total AS Monto_total, t.ID_Cliente, p.ID AS Pago_ID, p.Monto_total, p.NumTransaccion, p.ID_ObraArte 
+FROM Tipo_transaccion t 
+INNER JOIN Pago p ON t.ID = p.NumTransaccion 
+WHERE t.ID = '99';
+
+SELECT a.Nombre AS Nombre_Artista, COUNT(p.ID_ObraArte) AS Total_Obras_Vendidas
+FROM Artista a
+LEFT JOIN Obra_arte o ON a.Correo = o.ID_Artista
+LEFT JOIN Pago p ON o.ID = p.ID_ObraArte
+GROUP BY a.Nombre
+HAVING COUNT(p.ID_ObraArte) > 0
+ORDER BY Total_Obras_Vendidas DESC;
+
+
+
+
+
+
+
