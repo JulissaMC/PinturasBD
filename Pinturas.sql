@@ -182,133 +182,49 @@ GROUP BY a.Nombre
 HAVING COUNT(p.ID_ObraArte) > 0
 ORDER BY Total_Obras_Vendidas DESC;
 
-print("=====Menu=====")
-print("1. Visualizar una tabla ")
-print("2. Registrar en una tabla ")
-print("3. Actualizar una tabla ")
-print("4. Eliminar una tabla ")
-print("5.Salir")
-opcion= int(input("Elija una opcion: "))
-while opcion<1 or opcion>5:
-  print("Error, ingrese nuevamente: ")
-  opcion=int(input("Elija una opcion: "))
-  if opcion==1:
-    print("=====Elija la tabla que desea visualizar=====")
-    print("1. Cliente")
-    print("2. Artista")
-    print("3. Repartidor")
-    print("4. Obra de Arte")
-    print("5. Envio")
-    print("6. Tipo de Transaccion")
-    print("7. Pago")
-    print("8. Volver")
-    opcion2=int(input("Elija una opcion: "))
-    while opcion2<1 or opcion2>8:
-      print("Ingrese de nuevo la opcion: ")
-      opcion2=int(input("Elija una opcion: "))
-      if opcion2==1:
-        artistas=Listar_Cliente(self)
-      elif opcion2==2:
-        artistas=Listar_Artistas(self)
-      elif opcion2==3:
-        artistas=Listar_Repartidor(self)
-      elif opcion2==4:
-        artistas=Listar_Obra_Arte(self)
-      elif opcion2==5:
-        artistas=Listar_Envio(self)
-      elif opcion2==6:
-        artistas=Listar_tipo_transaccion(self)
-      elif opcion2==7:
-        artistas=Listar_Pago(self)
-  if opcion ==2:
-    print("=====Elija la tabla en la que desea Registrar=====")
-    print("1. Cliente")
-    print("2. Artista")
-    print("3. Repartidor")
-    print("4. Obra de Arte")
-    print("5. Envio")
-    print("6. Tipo de Transaccion")
-    print("7. Pago")
-    print("8. Volver")
-    opcion3=int(input("Elija una opcion: "))
-    while opcion3<1 or opcion3>8:
-      print("Ingrese de nuevo la opcion: ")
-      opcion3=int(input("Elija una opcion: "))
-      if opcion3==1:
-        artistas=Registrar_Cliente(self)
-      elif opcion3==2:
-        artistas=Registrar_Artistas(self)
-      elif opcion3==3:
-        artistas=Registrar_Repartidor(self)
-      elif opcion3==4:
-        artistas=Registrar_Obra_Arte(self)
-      elif opcion3==5:
-        artistas=Registrar_Envio(self)
-      elif opcion3==6:
-        artistas=Registrar_tipo_transaccion(self)
-      elif opcion3==7:
-        artistas=Registrar_Pago(self)
-  if opcion ==3:
-    print("=====Elija la tabla en la que desea Actualizar=====")
-    print("1. Cliente")
-    print("2. Artista")
-    print("3. Repartidor")
-    print("4. Obra de Arte")
-    print("5. Envio")
-    print("6. Tipo de Transaccion")
-    print("7. Pago")
-    print("8. Volver")
-    opcion4=int(input("Elija una opcion: "))
-    while opcion4<1 or opcion4>8:
-      print("Ingrese de nuevo la opcion: ")
-      opcion4=int(input("Elija una opcion: "))
-      if opcion4==1:
-        artistas=Actualizar_Cliente(self)
-      elif opcion4==2:
-        artistas=Actualizar_Artistas(self)
-      elif opcion4==3:
-        artistas=Actualizar_Repartidor(self)
-      elif opcion4==4:
-        artistas=Actualizar_Obra_Arte(self)
-      elif opcion4==5:
-        artistas=Actualizar_Envio(self)
-      elif opcion4==6:
-        artistas=Actualizar_tipo_transaccion(self)
-      elif opcion4==7:
-        artistas=Actualizar_Pago(self)  
-  if opcion ==4:
-    print("=====Elija la tabla en la que desea Eliminar=====")
-    print("1. Cliente")
-    print("2. Artista")
-    print("3. Repartidor")
-    print("4. Obra de Arte")
-    print("5. Envio")
-    print("6. Tipo de Transaccion")
-    print("7. Pago")
-    print("8. Volver")
-    opcion5=int(input("Elija una opcion: "))
-    while opcion5<1 or opcion5>8:
-      print("Ingrese de nuevo la opcion: ")
-      opcion5=int(input("Elija una opcion: "))
-      if opcion5==1:
-        artistas=Eliminar_Cliente(self)
-      elif opcion5==2:
-        artistas=Eliminar_Artistas(self)
-      elif opcion5==3:
-        artistas=Eliminar_Repartidor(self)
-      elif opcion5==4:
-        artistas=Eliminar_Obra_Arte(self)
-      elif opcion5==5:
-        artistas=Eliminar_Envio(self)
-      elif opcion5==6:
-        artistas=Eliminar_tipo_transaccion(self)
-      elif opcion5==7:
-        artistas=Eliminar_Pago(self)       
-  if opcion==5:
-    print("Gracias por preferirnos! ")
-    
+while True:
+    print("1. Consultar tabla")
+    print("2. Insertar datos en tabla")
+    print("3. Actualizar datos en tabla")
+    print("4. Eliminar datos en tabla")
+    print("5. Salir")
+    opcion = input("Seleccione una opción: ")
 
+    if opcion == "1":
+        tabla_consulta = input("Ingrese el nombre de la tabla a consultar: ")
+        if tabla_consulta in tablas:
+            consulta_query = f"SELECT * FROM {tabla_consulta};"
+            df = pd.read_sql(consulta_query, conexion)
+            print(df)
+        else:
+            print("La tabla ingresada no existe en la base de datos.")
+    elif opcion == "2":
+        tabla_insertar = input("Ingrese el nombre de la tabla en la que desea insertar datos: ")
+        if tabla_insertar in tablas:
+            columnas = tablas_columnas[tabla_insertar]
+            datos_ingresados = ingresar_datos_tabla(tabla_insertar, columnas)
+            
+            column_names = ", ".join(columnas)
+            values = ", ".join([f"'{valor}'" for valor in datos_ingresados.values()])
+            insert_query = f"INSERT INTO {tabla_insertar} ({column_names}) VALUES ({values})"           
+            cursor.execute(insert_query)
+            conexion.commit()        
+            print("Datos ingresados correctamente.")
+        else:
+            print("La tabla ingresada no existe en la base de datos.")
+    elif opcion == "3":
+        tabla_actualizar = input("Ingrese el nombre de la tabla en la que desea actualizar datos: ")
+        actualizar_registro(tabla_actualizar)
+    elif opcion == "4":
+        tabla_eliminar = input("Ingrese el nombre de la tabla de la que desea eliminar un registro: ")
+        id_eliminar = input("Ingrese el ID del registro que desea eliminar: ")
+        eliminar_registro(tabla_eliminar, id_eliminar)
+    elif opcion == "5":
+        break
+    else:
+        print("Opción no válida.")
 
+conexion.close()
 
 
 
