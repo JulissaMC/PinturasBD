@@ -182,49 +182,6 @@ GROUP BY a.Nombre
 HAVING COUNT(p.ID_ObraArte) > 0
 ORDER BY Total_Obras_Vendidas DESC;
 
-while True:
-    print("1. Consultar tabla")
-    print("2. Insertar datos en tabla")
-    print("3. Actualizar datos en tabla")
-    print("4. Eliminar datos en tabla")
-    print("5. Salir")
-    opcion = input("Seleccione una opción: ")
-
-    if opcion == "1":
-        tabla_consulta = input("Ingrese el nombre de la tabla a consultar: ")
-        if tabla_consulta in tablas:
-            consulta_query = f"SELECT * FROM {tabla_consulta};"
-            df = pd.read_sql(consulta_query, conexion)
-            print(df)
-        else:
-            print("La tabla ingresada no existe en la base de datos.")
-    elif opcion == "2":
-        tabla_insertar = input("Ingrese el nombre de la tabla en la que desea insertar datos: ")
-        if tabla_insertar in tablas:
-            columnas = tablas_columnas[tabla_insertar]
-            datos_ingresados = ingresar_datos_tabla(tabla_insertar, columnas)
-            
-            column_names = ", ".join(columnas)
-            values = ", ".join([f"'{valor}'" for valor in datos_ingresados.values()])
-            insert_query = f"INSERT INTO {tabla_insertar} ({column_names}) VALUES ({values})"           
-            cursor.execute(insert_query)
-            conexion.commit()        
-            print("Datos ingresados correctamente.")
-        else:
-            print("La tabla ingresada no existe en la base de datos.")
-    elif opcion == "3":
-        tabla_actualizar = input("Ingrese el nombre de la tabla en la que desea actualizar datos: ")
-        actualizar_registro(tabla_actualizar)
-    elif opcion == "4":
-        tabla_eliminar = input("Ingrese el nombre de la tabla de la que desea eliminar un registro: ")
-        id_eliminar = input("Ingrese el ID del registro que desea eliminar: ")
-        eliminar_registro(tabla_eliminar, id_eliminar)
-    elif opcion == "5":
-        break
-    else:
-        print("Opción no válida.")
-
-conexion.close()
 
 
 
