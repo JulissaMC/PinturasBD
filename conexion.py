@@ -74,27 +74,28 @@ def actualizar_registro(tabla):
 
 
 def eliminar_registro(tabla, id_registro):
+    tabla = tabla.title()
     try:
         if tabla in tablas:
             columnas = tablas_columnas[tabla]
             if "ID" in columnas:
-                id_column_index = columnas.index("ID")
-                id_column_name = columnas[id_column_index]
-                id_column_value = id_registro
+                id_columna_index = columnas.index("ID")
+                id_columna_nombre = columnas[id_columna_index]
+                id_columna_valor = id_registro
                 
                 # Verificar si hay restricciones de clave foránea
                 for otra_tabla, columnas_otra_tabla in tablas_columnas.items():
-                    if id_column_name in columnas_otra_tabla and otra_tabla != tabla:
-                        foreign_key_column_index = columnas_otra_tabla.index(id_column_name)
-                        foreign_key_column_name = columnas_otra_tabla[foreign_key_column_index]
-                        foreign_key_table = otra_tabla
+                    if id_columna_nombre in columnas_otra_tabla and otra_tabla != tabla:
+                        foreign_key_columna_index = columnas_otra_tabla.index(id_columna_nombre)
+                        foreign_key_columna_nombre = columnas_otra_tabla[foreign_key_columna_index]
+                        foreign_key_tabla = otra_tabla
                         
-                        query_foreign_key = f"SELECT COUNT(*) FROM {foreign_key_table} WHERE {foreign_key_column_name} = {id_column_value};"
+                        query_foreign_key = f"SELECT COUNT(*) FROM {foreign_key_tabla} WHERE {foreign_key_columna_nombre} = {id_columna_valor};"
                         cursor.execute(query_foreign_key)
                         count = cursor.fetchone()[0]
                         
                         if count > 0:
-                            print(f"No se puede eliminar el registro ya que existe una referencia en la tabla {foreign_key_table}.")
+                            print(f"No se puede eliminar el registro ya que existe una referencia en la tabla {foreign_key_tabla}.")
                             return
             
             query = f"DELETE FROM {tabla} WHERE ID = {id_registro};"
@@ -104,7 +105,7 @@ def eliminar_registro(tabla, id_registro):
         else:
             print("Tabla no encontrada.")
     except Exception as e:
-
+        print("Error:", e)
 
 
 while True:
@@ -150,4 +151,4 @@ while True:
         print("Opción no válida.")
 
 conexion.close()        
-        print("Error:", e)
+        
