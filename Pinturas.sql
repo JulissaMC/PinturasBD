@@ -183,6 +183,16 @@ HAVING COUNT(p.ID_ObraArte) > 0
 ORDER BY Total_Obras_Vendidas DESC;
 
 
-
+----- 2 triggers -----
+Delimiter /
+create trigger actualizar_monto_total
+after insert on Pago
+for each row
+begin
+    update Tipo_transaccion
+    set Monto_total = Monto_total + new.Precio
+    where Tipo_transaccion.ID = new.NumTransaccion;
+end /
+Delimiter;
 
 
