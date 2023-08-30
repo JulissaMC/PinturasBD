@@ -319,4 +319,13 @@ Grant Select on curina.* to "contador";
 Grant references on curina.pinturas_disponibles to "Cliente1";
 Grant references on curina.total_compras_cliente to "contador";
 
+-- Debe existir por lo menos 5 indices
+CREATE UNIQUE INDEX indice_nombre ON Cliente (Nombre) USING BTREE ;
 
+CREATE UNIQUE INDEX indice_correo ON Repartidor (Correo) USING BTREE;
+
+CREATE UNIQUE INDEX indice_telefono ON Artista (Telefono) USING BTREE;
+
+CREATE UNIQUE INDEX indice_estilo ON Obra_arte (Estilo) USING BTREE;
+
+CREATE UNIQUE INDEX indice_instalación ON Envio (Instalacion) USING BTREE;
