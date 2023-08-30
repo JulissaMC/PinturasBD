@@ -8,6 +8,10 @@ conexion = msql.connect(host="localhost", #conexión local
 
 cursor = conexion.cursor()
 
+sp_insertar_cliente = "InsertarCliente"
+sp_actualizar_cliente = "ActualizarCliente"
+sp_eliminar_repartidor = "EliminarRepartidor"
+
 tablas = ["Cliente","Repartidor","Artista","Obra_arte","Envio","Tipo_transaccion","Pago"]
 
 tablas_columnas = {"Cliente":["Correo", "Nombre", "Pais", "Ciudad", "Telefono"],
@@ -28,7 +32,15 @@ def ingresar_datos_tabla(tabla, columnas):
     datos = {}
     for columna in columnas:
         datos[columna] = input(f"Ingrese {columna}: ")
-    return datos
+    try:
+        values = ", ".join([f"'{valor}'" for valor in datos.values()])
+        query = f"CALL {sp_insertar_cliente}({values});"
+        cursor.execute(query)
+        conexion.commit()
+        print("Datos ingresados correctamente.")
+    except Exception as e:
+        print("Error:", e)
+
 
 def actualizar_registro(tabla):
     if tabla in tablas:
@@ -62,8 +74,8 @@ def actualizar_registro(tabla):
                         nuevos_datos[columna] = input(f"Ingrese nuevo valor para {columna}: ")
         
         try:
-            set_vals = ", ".join([f"{col} = '{val}'" for col, val in nuevos_datos.items()])
-            query = f"UPDATE {tabla} SET {set_vals} WHERE ID = {id_registro};"
+            set_vals = ", ".join([f"'{val}'" for val in nuevos_datos.values()])
+            query = f"CALL {sp_actualizar_cliente}({set_vals}, {id_registro});"
             cursor.execute(query)
             conexion.commit()
             print("Registro actualizado exitosamente.")
@@ -98,7 +110,7 @@ def eliminar_registro(tabla, id_registro):
                             print(f"No se puede eliminar el registro ya que existe una referencia en la tabla {foreign_key_tabla}.")
                             return
             
-            query = f"DELETE FROM {tabla} WHERE ID = {id_registro};"
+            query = f"CALL {sp_eliminar_repartidor}({id_registro});"
             cursor.execute(query)
             conexion.commit()
             print("Registro eliminado exitosamente.")
@@ -149,116 +161,6 @@ while True:
         break
     else:
         print("Opción no válida.")
-
-
-DELIMITER //
-CREATE PROCEDURE InsertarCliente(
-    IN p_Correo varchar(30),
-    IN p_Nombre varchar(30),
-    IN p_Pais varchar(30),
-    IN p_Ciudad varchar(30),
-    IN p_Telefono varchar(30)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Error en la inserción de Cliente';
-    END;
-    START TRANSACTION;
-    INSERT INTO Cliente (Correo, Nombre, Pais, Ciudad, Telefono)
-    VALUES (p_Correo, p_Nombre, p_Pais, p_Ciudad, p_Telefono);
-
-    COMMIT;
-END //
-DELIMITER ;
-
-
-DELIMITER //
-CREATE PROCEDURE ActualizarCliente(
-    IN p_Correo varchar(30),
-    IN p_Nombre varchar(30),
-    IN p_Pais varchar(30),
-    IN p_Ciudad varchar(30),
-    IN p_Telefono varchar(30)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Error en la actualización de Cliente';
-    END;
-    START TRANSACTION;
-    UPDATE Cliente
-    SET Nombre = p_Nombre, Pais = p_Pais, Ciudad = p_Ciudad, Telefono = p_Telefono
-    WHERE Correo = p_Correo;
-
-    COMMIT;
-END //
-DELIMITER ;
-
-
-
-DELIMITER //
-CREATE PROCEDURE EliminarRepartidor(
-    IN p_ID varchar(30)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Error en la eliminación de Repartidor';
-    END;
-    START TRANSACTION;
-    DELETE FROM Repartidor
-    WHERE ID = p_ID;
-    COMMIT;
-END //
-DELIMITER ;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
