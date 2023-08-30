@@ -150,5 +150,117 @@ while True:
     else:
         print("Opción no válida.")
 
+
+DELIMITER //
+CREATE PROCEDURE InsertarCliente(
+    IN p_Correo varchar(30),
+    IN p_Nombre varchar(30),
+    IN p_Pais varchar(30),
+    IN p_Ciudad varchar(30),
+    IN p_Telefono varchar(30)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Error en la inserción de Cliente';
+    END;
+    START TRANSACTION;
+    INSERT INTO Cliente (Correo, Nombre, Pais, Ciudad, Telefono)
+    VALUES (p_Correo, p_Nombre, p_Pais, p_Ciudad, p_Telefono);
+
+    COMMIT;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE ActualizarCliente(
+    IN p_Correo varchar(30),
+    IN p_Nombre varchar(30),
+    IN p_Pais varchar(30),
+    IN p_Ciudad varchar(30),
+    IN p_Telefono varchar(30)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Error en la actualización de Cliente';
+    END;
+    START TRANSACTION;
+    UPDATE Cliente
+    SET Nombre = p_Nombre, Pais = p_Pais, Ciudad = p_Ciudad, Telefono = p_Telefono
+    WHERE Correo = p_Correo;
+
+    COMMIT;
+END //
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE EliminarRepartidor(
+    IN p_ID varchar(30)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Error en la eliminación de Repartidor';
+    END;
+    START TRANSACTION;
+    DELETE FROM Repartidor
+    WHERE ID = p_ID;
+    COMMIT;
+END //
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 conexion.close()        
         
