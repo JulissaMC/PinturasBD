@@ -195,8 +195,35 @@ begin
 end /
 Delimiter;
 
+Delimiter |
+create trigger eliminar_obra
+before insert on tipo_transaccion.ID
+for each row
+begin 
+Delete from obra_arte where pago.NumTransaccion=(new.valor)  and pago.ID_ObraArte=obra_arte.ID;
+End;
+| 
 
+    -- 4 reportes 
+create view total_compras_cliente as 
+select c.Nombre,c.Pais, sum(tt.total)
+from tipo_transaccion as tt join cliente as c on c.correo=tt.ID_Cliente
+Group by tt.ID_cliente;
 
+create view pintura_comprada_cliente as
+select c.Correo, c.Nombre, oa.Nombre as Pintura
+from ((tipo_transaccion as tt join pago as p on tt.ID=p.NumTransaccion) join obra_arte as oa on p.ID_ObraArte=oa.ID) join cliente as c on c.Correo=tt.ID_Cliente
+where tt.ID =p.NumTransaccion and oa.Opcion like "Compra";
+
+create view pinturas_disponibles as
+select Nombre as Pintura, Opcion 
+from obra_arte as oa join pago as p on oa.ID=p.ID_ObraArte
+where p.NumTransaccion like "null";
+
+create view pintura_alquilada_cliente as 
+select c.Correo, c.Nombre, oa.Nombre as Pintura
+from ((tipo_transaccion as tt join pago as p on tt.ID=p.NumTransaccion) join obra_arte as oa on p.ID_ObraArte=oa.ID) join cliente as c on c.Correo=tt.ID_Cliente
+where tt.ID =p.NumTransaccion and oa.Opcion like "Alquiler";
 
 
 
@@ -268,3 +295,28 @@ BEGIN
     COMMIT;
 END //
 DELIMITER ;
+
+-- Añadir por lo menos 5 usuarios 
+create user "Artista1" identified by "12345";
+Grant Insert,Delete, Update on curina.obra_arte to "Artista1";
+Grant Delete,Insert, Update on curina.artista to "Artista1";
+
+create user "Repartidor1" identified by "1111";
+Grant Insert,Delete,Update on curina.repartidor to "Repartidor1";
+
+create user "Cliente1" identified by "2222";
+Grant Insert,Delete,update on curina.cliente to "Cliente1";
+Grant Select on curina.obra_arte to "Cliente1";
+
+
+create user "Administrador" identified by "3333";
+Grant all privileges on curina.* to "Admin" with grant option;
+
+create user "contador" identified by "4444";
+Grant Select on curina.* to "contador";
+
+-- Debe existir por lo menos 2 permisos a vistas
+Grant references on curina.pinturas_disponibles to "Cliente1";
+Grant references on curina.total_compras_cliente to "contador";
+
+
